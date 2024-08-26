@@ -12,11 +12,11 @@ import jakarta.ws.rs.core.MediaType;
 public class GreetingResource {
 
     @GET
-    @Produces(MediaType.TEXT_PLAIN)
+    @Produces(MediaType.APPLICATION_JSON)
     public String hello() {
         Library1Greeting g1 = new Library1Greeting();
         Library2Greeting g2 = new Library2Greeting();
         
-        return g1.sayHello() + " " + g2.sayHello();
+        return String.format("{ \"g1\" :\"%s\", \"g2\" : \"%s\"}", g1.sayHello(), g2.sayHello());
     }
 }

@@ -1,0 +1,10 @@
+body {
+    background-color: darkcyan;
+}
+
+#container {
+    background-color: white;
+    margin: 50px;
+    padding: 50px;
+    border: 1px solid gray;
+}
