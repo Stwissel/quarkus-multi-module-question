@@ -22,7 +22,7 @@ bin/
 nb-configuration.xml
 
 # Visual Studio Code
-.vscode
+# We WANT .vscode
 .factorypath
 
 # OSX

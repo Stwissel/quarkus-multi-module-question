@@ -1,74 +1,79 @@
-# library1
+# Quarkus Multi-module project
 
-This project uses Quarkus, the Supersonic Subatomic Java Framework.
+This project uses [Quarkus](https://quarkus.io/), the Supersonic Subatomic Java Framework.
 
-If you want to learn more about Quarkus, please visit its website: <https://quarkus.io/>.
+It serves as demo how to use Quarkus in a multi-module project with a Maven reactor and a Maven parent project.
+Once packaged each module can be used on its own. The demo partially takes advantage of VSCode's task management
 
-## Running the application in dev mode
+## Modules
 
-You can run your application in dev mode that enables live coding using:
+| Module   | Type    | Port | Debug | Purpose                                                         |
+| -------- | ------- | :--: | :---: | --------------------------------------------------------------- |
+| root     | pom     | n/a  |  n/a  | Maven reactor, defining all modules                             |
+| parent   | pom     | n/a  |  n/a  | Maven parent, with properties, dependency and plugin management |
+| library1 | jar     | n/a  |  n/a  | Collection on POJO classes 1, no main function                  |
+| library2 | jar     | n/a  |  n/a  | Collection on POJO classes 1, no main function                  |
+| service1 | quarkus | 8080 | 5005  | Web endpoint for `/hello`                                       |
+| service2 | quarkus | 8081 | 5006  | More web endpoints and webUI                                    |
 
-```shell script
-./mvnw compile quarkus:dev
+## Goals
+
+- Ability to create indenpendent (micro)services 1 & 2
+- Ability to test services independent **and** together
+
+## Take note
+
+- properties are defined in `parent`, try to avoid defining them in other modules
+- Maven reactor and Maven parent a separated, usually you find them muddled together
+- **ALL** dependency **versions** are defined in the parent's `<dependencyManagement>` element. This includes default configurations for a dependency
+- **ALL** plugin **versions** are defined in the parent's `<pluginManagement>` element. This includes default configurations for a plugin
+- Each quarkus app has a profile associated with it. Only the profile contains the `quarkus-maven-plugin`
+- Each quarkus app needs to run in its own shell, see below
+- When building the final output, you need to specify all profiles, so `quarkus-maven-plugin` can run its magic
+- Run `mvn clean` separately to avoid clearing out classes that might be in use
+
+## Shell
+
+The commands to run `quarkus:dev` that work in any Ide, each in its own terminal:
+
+- `mvn compile quarkus:dev -Pservice1`
+- `mvn compile quarkus:dev -Pservice2`
+
+In VSCode you want to use a task (see below)
+
+## Debugging
+
+The project contains a sample `launch.json` that allows to attach to either service1 or service2
+
+## Environment
+
+- Tested on macOS, Ubuntu, devContainers
+- VSCode & Maven in current version
+
+## VSCode Task
+
+There are 4 tasks defined:
+
+- `clear` to run `mvn clear`
+- `Run service1`
+- `Run service2`
+- `Run solution` : That's what you avtually run triggering parallel execution of service1 and service2
+
+You can create a keyboard shortcut. Shortcuts can't be defined on a per project basis, so you add this to your user setting's shortcut file:
+
+```json
+[
+  {
+    "key": "ctrl+0",
+    "command": "workbench.action.tasks.runTask",
+    "args": "Run solution"
+  }
+]
 ```
 
-> **_NOTE:_**  Quarkus now ships with a Dev UI, which is available in dev mode only at <http://localhost:8080/q/dev/>.
+## Feedback
 
-## Packaging and running the application
+- Open an issue
+- reach out on [mastodon](https://chaos.social/@stw)
 
-The application can be packaged using:
-
-```shell script
-./mvnw package
-```
-
-It produces the `quarkus-run.jar` file in the `target/quarkus-app/` directory.
-Be aware that it’s not an _über-jar_ as the dependencies are copied into the `target/quarkus-app/lib/` directory.
-
-The application is now runnable using `java -jar target/quarkus-app/quarkus-run.jar`.
-
-If you want to build an _über-jar_, execute the following command:
-
-```shell script
-./mvnw package -Dquarkus.package.jar.type=uber-jar
-```
-
-The application, packaged as an _über-jar_, is now runnable using `java -jar target/*-runner.jar`.
-
-## Creating a native executable
-
-You can create a native executable using:
-
-```shell script
-./mvnw package -Dnative
-```
-
-Or, if you don't have GraalVM installed, you can run the native executable build in a container using:
-
-```shell script
-./mvnw package -Dnative -Dquarkus.native.container-build=true
-```
-
-You can then execute your native executable with: `./target/library1-1.0.0-SNAPSHOT-runner`
-
-If you want to learn more about building native executables, please consult <https://quarkus.io/guides/maven-tooling>.
-
-## Related Guides
-
-- Picocli ([guide](https://quarkus.io/guides/picocli)): Develop command line applications with Picocli
-
-## Provided Code
-
-### Picocli Example
-
-Hello and goodbye are civilization fundamentals. Let's not forget it with this example picocli application by changing the <code>command</code> and <code>parameters</code>.
-
-[Related guide section...](https://quarkus.io/guides/picocli#command-line-application-with-multiple-commands)
-
-Also for picocli applications the dev mode is supported. When running dev mode, the picocli application is executed and on press of the Enter key, is restarted.
-
-As picocli applications will often require arguments to be passed on the commandline, this is also possible in dev mode via:
-
-```shell script
-./mvnw compile quarkus:dev -Dquarkus.args='Quarky'
-```
+YMMV

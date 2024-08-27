@@ -1,0 +1,47 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Run service1",
+            "type": "shell",
+            "command": "mvn compile quarkus:dev -Pservice1",
+            "group": "none",
+            "presentation": {
+                "reveal": "always",
+                "focus": false,
+                "panel": "new",
+                "showReuseMessage": false,
+                "clear": true
+            }
+        },
+        {
+            "label": "Run service2",
+            "type": "shell",
+            "command": "mvn compile quarkus:dev -Pservice2",
+            "group": "none",
+            "presentation": {
+                "reveal": "always",
+                "focus": false,
+                "panel": "new",
+                "showReuseMessage": false,
+                "clear": true
+            }
+        },
+        {
+            "label": "Run solution",
+            "dependsOn": [
+                "Run service1",
+                "Run service2"
+            ],
+            "group": "none"
+        },
+        {
+            "label": "clear",
+            "type": "shell",
+            "command": "mvn -B clear",
+            "group": "none"
+        }
+    ]
+}
